@@ -20,7 +20,6 @@ router.get('/', function(req, res, next) {
 	    var uploadTimestamp = c.lastMod();
 	    return res.send(uploadTimestamp);
 	}); 
-	  c.connect(connectonProperties);
-	  
+	  c.connect(connectonProperties);	  
 });
 module.exports = router;
