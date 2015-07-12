@@ -3,9 +3,6 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-
-	res.send('HELLO');
-	/*
 	var Client = require('ftp');
 	var fs = require('fs');
 
@@ -24,7 +21,6 @@ router.get('/', function(req, res, next) {
 	    return res.send(uploadTimestamp);
 	}); 
 	  c.connect(connectonProperties);
-	  */
+	  
 });
-
 module.exports = router;

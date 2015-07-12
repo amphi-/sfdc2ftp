@@ -1,11 +1,14 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var router = express.Router();
+var jsonParser = bodyParser.json()
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.post('/', jsonParser, function(req, res, next) {
+	// if (!req.body) return res.sendStatus(400);
 	var json2csv = require('json2csv');
 	var fs = require('fs');
-	var json = 
+	var json_raw = req.body;
 	var fields = ['field1', 'field2', 'field3'];
 	var myData = [{
 		'field1':'text1',
@@ -15,11 +18,11 @@ router.get('/', function(req, res, next) {
  
 	json2csv({ data: myData, fields: fields }, function(err, csv) {
 	  	if (err) console.log(err);
-  		fs.writeFile('../foo.csv', csv, function(err) {
+  		fs.writeFile('foo.csv', 'some_remote.csv', function(err) {
     	if (err) throw err;
     	console.log('file saved');
   		});
 	});
+	res.send(200);
 });
-
 module.exports = router;

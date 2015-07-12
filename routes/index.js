@@ -23,5 +23,4 @@ router.get('/', function(req, res, next) {
 	}); 
 	  c.connect(connectonProperties);
 });
-
 module.exports = router;
