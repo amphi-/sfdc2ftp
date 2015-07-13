@@ -18,11 +18,20 @@ router.get('/', function(req, res, next) {
   	};
 	c.on('ready', function() {
 		c.put('/Users/simon/csvhandler/foo.csv', 'foo.remote-copy.csv', function(err) {
-	    if (err) throw err + res.sendStatus(500);
-	      c.end();
-	      timestamp = Math.round((new Date()).getTime() / 1000);
-	      console.log(timestamp);
-		  console.log(res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage }));
+	    if (err) {
+	    	throw err;
+	    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
+	    	c.end();
+	    } else {
+			c.end();
+		    isSuccess = true;
+		    statuscode = 200;
+		    statusmessage = 'upload successfull';
+		    timestamp = Math.round((new Date()).getTime() / 1000);
+		    // console.log(timestamp);
+	    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
+	    }
+	      
 	    });
 		
 	}); 

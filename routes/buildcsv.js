@@ -6,32 +6,32 @@ var jsonParser = bodyParser.json()
 
 /* GET home page. */
 router.post('/', jsonParser, function(req, res, next) {
-	var json2csv = require('json2csv');
 	var fs = require('fs');
+	var moment = require('moment');
 	var json = req.body;
+	var jobId = json.jobId;
+	var fields = json.rows[0];
+	console.log(fields);
+	json.rows.shift();
+	var allData = json.rows;
+	var allDataJoined = [];
+	var now = moment().format('YYYY MM DD hh:mm:ss');
+	console.log(now);
 
-	try {
-		var id = json.jobId;
-		var dataRowsCount = json.dataRowsCount;
-		var fields = json.rows[0];
-		json.rows.shift();
-		var allData = json.rows;
-		console.log(json.jobId);
-		console.log(fields);
-		console.log(allData);
-	} catch(e) {
-		console.log(json.jobId);
-		console.log(e);
+	var filename = jobId + ' - ' + now + '.csv';
+	console.log(filename);
+	for(i = 0; i < allData.length; i++) {
+		allDataJoined.push('\'' + allData[i].join('\',\'') + '\'');
 	}
- 
-	json2csv({ data:allData, fields:fields}, function(err, csv) {
-	  	if (err) console.log(err);
-  		fs.writeFile('foo.csv', csv, function(err) {
-    	if (err) throw err + res.sendStatus(500);
-    	console.log('file created');
-    	res.sendStatus(200);
-		open('http://localhost:3000/upload');
-  		});
-	});
+
+	var data = allData.join('\n');
+   	fs.writeFile(filename, fields + '\n' + data, function(err) {
+	   	if(err) {throw err;}
+	   	});
+   	console.log('file created');
+
+	res.sendStatus(200);	
+	open('http://localhost:3000/upload');
+
 });
 module.exports = router;
