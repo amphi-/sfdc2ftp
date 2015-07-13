@@ -1,5 +1,9 @@
 var express = require('express');
 var router = express.Router();
+var isSuccess = false;
+var timestamp;
+var statuscode = 500;
+var statusmessage = 'Upload failed';
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -14,12 +18,14 @@ router.get('/', function(req, res, next) {
   	};
 	c.on('ready', function() {
 		c.put('/Users/simon/csvhandler/foo.csv', 'foo.remote-copy.csv', function(err) {
-	    if (err) throw err;
+	    if (err) throw err + res.sendStatus(500);
 	      c.end();
+	      timestamp = Math.round((new Date()).getTime() / 1000);
+	      console.log(timestamp);
+		  console.log(res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage }));
 	    });
-	    var uploadTimestamp = c.lastMod();
-	    return res.send(uploadTimestamp);
+		
 	}); 
-	  c.connect(connectonProperties);	  
+	  c.connect(connectonProperties);	
 });
 module.exports = router;
