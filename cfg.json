@@ -1,7 +1,9 @@
-{
-
-	"host": "localhost",
-  	"user": "simon",
-  	"password": ""
-}
+{	"ftp_credentials": [
+		{"username":"user"},
+		{"pwd": "1234"}
+	],
+	"ftp_host":"localhost",
+	"remote_token":"x§fgAA67=",
+	"create_dir":"/Users/simon/csvhandler/foo.csv",
+};
 

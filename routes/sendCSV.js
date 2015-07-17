@@ -20,19 +20,21 @@ try {
 
 /* GET home page. */
 router.post('/', jsonParser, function(req, res, next) {
-	//convert to CSV
 	var moment = require('moment');
+	var startTime = moment().format('YYYY MM DD hh:mm:ss sss');
+	console.log('starting to create file at' + startTime);
+	//convert to CSV
 	var json = req.body;
 	var jobId = json.jobId;
 	var fields = json.rows[0];
-	console.log(fields);
+	//console.log(fields);
 	json.rows.shift();
 	var allData = json.rows;
 	var allDataJoined = [];
-	var now = moment().format('YYYY MM DD hh:mm:ss');
-	console.log(now);
+	var createTime = moment().format('YYYY MM DD hh:mm:ss sss');
 
-	var filename = jobId + ' - ' + now + '.csv';
+
+	var filename = jobId + ' - ' + createTime + '.csv';
 	console.log(filename);
 	for(i = 0; i < allData.length; i++) {
 		allDataJoined.push('\'' + allData[i].join('\',\'') + '\'');
@@ -45,16 +47,18 @@ router.post('/', jsonParser, function(req, res, next) {
 	   		console.log('file not created');
 	   	}
    	});
-   	console.log('file created');
+   	console.log('file created at ' + createTime);
 
    	//upload file
+   	var startUpload = moment().format('YYYY MM DD hh:mm:ss sss');
+   	console.log('upload started at ' + startUpload);
 	var Client = require('ftp');
 
   	var c = new Client();
     //var connectonProperties = { cfg.host, cfg.user, cfg.password };
     var connectonProperties = {	host: 'localhost',
   								user: 'simon',
-  								password: '' 
+  								password: ':Ek00Lbo1!' 
 	};
 	c.on('ready', function() {
 		c.put('/Users/simon/csvhandler/foo.csv', 'foo.remote-copy.csv', function(err) {
@@ -73,13 +77,16 @@ router.post('/', jsonParser, function(req, res, next) {
 	    	} 
 	    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 	    	c.end();
+	    	var failTime = moment().format('YYYY MM DD hh:mm:ss sss');
+	    	console.log('upload failed at ' + failTime);
 	    } else {
 			c.end();
 		    isSuccess = true;
 		    statuscode = 200;
 		    statusmessage = 'upload successfull';
 		    timestamp = Math.round((new Date()).getTime() / 1000);
-		    // console.log(timestamp);
+		    var uploadTime = moment().format('YYYY MM DD hh:mm:ss sss');
+		    console.log('file uploaded at ' + uploadTime);
 	    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 	    }
 	      
