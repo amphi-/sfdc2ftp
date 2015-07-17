@@ -1,25 +1,64 @@
 var express = require('express');
+var bodyParser = require('body-parser');
+var open = require("open");
+var fs = require('fs');
 var router = express.Router();
+var jsonParser = bodyParser.json()
 var isSuccess = false;
 var timestamp;
 var statuscode = 500;
 var statusmessage = 'upload failed';
 
+var data = fs.readFileSync("./cfg.json"), cfg;
+
+try {
+	var cfg = JSON.parse(data);
+	console.log(cfg);
+} catch(err){
+	console.log('couldnt read cfg file');
+}
+
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.post('/', jsonParser, function(req, res, next) {
+	//convert to CSV
+	var moment = require('moment');
+	var json = req.body;
+	var jobId = json.jobId;
+	var fields = json.rows[0];
+	console.log(fields);
+	json.rows.shift();
+	var allData = json.rows;
+	var allDataJoined = [];
+	var now = moment().format('YYYY MM DD hh:mm:ss');
+	console.log(now);
+
+	var filename = jobId + ' - ' + now + '.csv';
+	console.log(filename);
+	for(i = 0; i < allData.length; i++) {
+		allDataJoined.push('\'' + allData[i].join('\',\'') + '\'');
+	}
+
+	var data = allData.join('\n');
+   	fs.writeFile(filename, fields + '\n' + data, function(err) {
+	   	if(err) {
+	   		throw err;
+	   		console.log('file not created');
+	   	}
+   	});
+   	console.log('file created');
+
+   	//upload file
 	var Client = require('ftp');
-	var fs = require('fs');
 
   	var c = new Client();
-    var connectonProperties = {
-	  	host: 'localhost',
-	  	user: 'simon',
-	  	password: ':Ek00Lbo1!'
-  	};
+    //var connectonProperties = { cfg.host, cfg.user, cfg.password };
+    var connectonProperties = {	host: 'localhost',
+  								user: 'simon',
+  								password: '' 
+	};
 	c.on('ready', function() {
 		c.put('/Users/simon/csvhandler/foo.csv', 'foo.remote-copy.csv', function(err) {
 	    if (err) {
-	    	//throw err;
 	    	statuscode = c.error();
 	    	if (statuscode == 503) {
 	    		statusmessage = 'Service Unavailable';
@@ -47,6 +86,7 @@ router.get('/', function(req, res, next) {
 	    });
 		
 	}); 
-	  c.connect(connectonProperties);	
+	  c.connect(connectonProperties);
+
 });
 module.exports = router;
