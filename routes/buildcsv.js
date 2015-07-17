@@ -4,7 +4,6 @@ var open = require("open");
 var router = express.Router();
 var jsonParser = bodyParser.json()
 
-/* GET home page. */
 router.post('/', jsonParser, function(req, res, next) {
 	var fs = require('fs');
 	var moment = require('moment');

@@ -1,0 +1,38 @@
+#####
+#	CSV exchanger middleware documentation
+#	version: 	1.0.0
+#	author: 	CowPanda Ltd.
+#####
+
+Contents
+	1. Overview
+	2. Installation
+		a. dependencies
+		b. required files
+	3. Configuration
+	4. Error messages
+	5. Maintenance
+
+
+1. Overview
+
+The middleware is written in NodeJS v0.12.7 using the Express.js 4 framework. The middleware receives data from salesforce via JSON POST, converts the data into a CSV file (Windows-1252 encoded). This file will be uploaded to the desired customer FTP. The middleware will be triggered by a Apex script written on salesforce side.
+
+2. Installation
+
+GIT
+You can get the sourcecode via 'git clone https://github.com/amphi-/csv_middleware'. The code can run anywhere on your webserver inside your www folder as it provides it's own web service.
+
+Network sharing
+Download the source code from network share path provided.
+
+	a. dependencies
+	   Node.js
+	   Express.js
+
+	b. required files
+	   app.js
+	   buildcsv.js
+	   upload.js
+	   cfg.json
+

@@ -4,6 +4,8 @@ var isSuccess = false;
 var timestamp;
 var statuscode = 500;
 var statusmessage = 'Upload failed';
+var config = require('./cfg.json');
+console.log(config.ftp_host);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
