@@ -1,0 +1,9 @@
+{
+	"jobId":"12345x03",
+	"dataRowsCount":"4",
+	"rows": [
+			["id", "name", "phone", "email"],
+			["123", "Simon", "+351 1234", "simon@cowpanda.com"],
+			["456", "Sebastian", "+351 5678", "seb@cowpanda.com"]
+	]
+}
