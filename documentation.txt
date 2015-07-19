@@ -9,6 +9,7 @@ Contents
 	2. Installation
 		a. dependencies
 		b. required files
+		c. modules
 	3. Configuration
 	4. Error messages
 	5. Maintenance
@@ -32,7 +33,13 @@ Download the source code from network share path provided.
 
 	b. required files
 	   app.js
-	   buildcsv.js
-	   upload.js
+	   sendCSV.js
 	   cfg.json
+
+	c. modules
+	   fs
+	   body-parser
+	   moment
+	   ftp
+	   windows-1252
 

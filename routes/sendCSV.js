@@ -1,6 +1,5 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var open = require("open");
 var fs = require('fs');
 var router = express.Router();
 var jsonParser = bodyParser.json()
@@ -9,19 +8,11 @@ var timestamp;
 var statuscode = 500;
 var statusmessage = 'upload failed';
 
-var data = fs.readFileSync("./cfg.json"), cfg;
+var cfg = require('./cfg.json');
 
-try {
-	var cfg = JSON.parse(data);
-	console.log(cfg);
-} catch(err){
-	console.log('couldnt read cfg file');
-}
-
-/* GET home page. */
 router.post('/', jsonParser, function(req, res, next) {
 	var moment = require('moment');
-	var startTime = moment().format('YYYY MM DD hh:mm:ss sss');
+	var startTime = moment().format('YYYY MM DD HH:mm:ss sss');
 	console.log('starting to create file at' + startTime);
 	//convert to CSV
 	var json = req.body;
@@ -31,7 +22,7 @@ router.post('/', jsonParser, function(req, res, next) {
 	json.rows.shift();
 	var allData = json.rows;
 	var allDataJoined = [];
-	var createTime = moment().format('YYYY MM DD hh:mm:ss sss');
+	var createTime = moment().format('YYYY MM DD HH:mm:ss');
 
 
 	var filename = jobId + ' - ' + createTime + '.csv';
@@ -39,9 +30,11 @@ router.post('/', jsonParser, function(req, res, next) {
 	for(i = 0; i < allData.length; i++) {
 		allDataJoined.push('\'' + allData[i].join('\',\'') + '\'');
 	}
-
+	var cp1252 = require('windows-1252');
 	var data = allData.join('\n');
-   	fs.writeFile(filename, fields + '\n' + data, function(err) {
+	var encodedData = cp1252.encode(data);
+	console.log(encodedData);
+   	fs.writeFile(filename, fields + '\n' + encodedData, function(err) {
 	   	if(err) {
 	   		throw err;
 	   		console.log('file not created');
@@ -50,31 +43,31 @@ router.post('/', jsonParser, function(req, res, next) {
    	console.log('file created at ' + createTime);
 
    	//upload file
-   	var startUpload = moment().format('YYYY MM DD hh:mm:ss sss');
+   	var startUpload = moment().format('YYYY MM DD HH:mm:ss sss');
    	console.log('upload started at ' + startUpload);
 	var Client = require('ftp');
 
   	var c = new Client();
-    //var connectonProperties = { cfg.host, cfg.user, cfg.password };
-    var connectonProperties = {	host: 'localhost',
-  								user: 'simon',
-  								password: ':Ek00Lbo1!' 
+    var connectonProperties = {	host: cfg.ftp_host,
+  								user: cfg.ftp_credentials[0].user,
+  								password: cfg.ftp_credentials[1].pw
 	};
+	console.log(connectonProperties);
 	c.on('ready', function() {
-		c.put('/Users/simon/csvhandler/foo.csv', 'foo.remote-copy.csv', function(err) {
+		c.put(cfg.create_dir + filename, filename, function(err) {
 	    if (err) {
-	    	statuscode = c.error();
-	    	if (statuscode == 503) {
-	    		statusmessage = 'Service Unavailable';
-	    	} else if(statuscode == 553) {
-	    		statusmessage = 'Requested action not taken. File name not allowed.';
-	    	} else if(statuscode == 10054) {
-	    		statusmessage = 'Connection reset by peer. The connection was forcibly closed by the remote host.';
-	    	} else if(statuscode == 10060) {
-	    		statusmessage = 'Cannot connect to remote server.';
-	    	} else if(statuscode == '10061') {
-	    		statusmessage = 'Cannot connect to remote server. The connection is actively refused by the server.';
-	    	} 
+	    	// var statuscode = c.error();
+	    	// if (statuscode == 503) {
+	    	// 	statusmessage = 'Service Unavailable';
+	    	// } else if(statuscode == 553) {
+	    	// 	statusmessage = 'Requested action not taken. File name not allowed.';
+	    	// } else if(statuscode == 10054) {
+	    	// 	statusmessage = 'Connection reset by peer. The connection was forcibly closed by the remote host.';
+	    	// } else if(statuscode == 10060) {
+	    	// 	statusmessage = 'Cannot connect to remote server.';
+	    	// } else if(statuscode == '10061') {
+	    	// 	statusmessage = 'Cannot connect to remote server. The connection is actively refused by the server.';
+	    	// } 
 	    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 	    	c.end();
 	    	var failTime = moment().format('YYYY MM DD hh:mm:ss sss');

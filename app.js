@@ -7,8 +7,6 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var upload = require('./routes/upload');
-var buildcsv = require('./routes/buildcsv');
 var sendCSV = require('./routes/sendCSV');
 
 var app = express();
@@ -27,8 +25,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
-app.use('/buildcsv', buildcsv);
-app.use('/upload', upload);
 app.use('/sendCSV', sendCSV); 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
