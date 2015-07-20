@@ -48,7 +48,7 @@ router.post('/', jsonParser, function(req, res, next) {
 		   	console.log('file created at ' + createTime);
 
 		   	//upload file
-		   	var startUpload = moment().format('YYYYMMDDHHmmsssss');
+		   	var startUpload = moment.utc().format('YYYYMMDDHHmmsssss');
 
 				var Client = require('ftp');
 			  	var c = new Client();
@@ -60,14 +60,14 @@ router.post('/', jsonParser, function(req, res, next) {
 				c.on('error',function(err) {
 					console.log('upload failed');
 					console.log(err);
-					timestamp = Math.round((new Date()).getTime() / 1000);
+					timestamp = moment.utc().format('YYYY MM DD hh:mm:ss sss');
 					res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 				})
 				c.on('ready', function() {
 					c.put(cfg.create_dir + filename, filename, function(err) {
 				    if (err) {
 				    	c.end();
-				    	timestamp = Math.round((new Date()).getTime() / 1000);
+							timestamp = moment.utc().format('YYYY MM DD hh:mm:ss sss');
 				    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 				    	console.log('upload failed at ' + failTime);
 				    	console.log(err);
@@ -78,10 +78,10 @@ router.post('/', jsonParser, function(req, res, next) {
 				    	fs.unlink(cfg.create_dir + filename, function (err) {
 	  						if (err) {
 	  							console.log('removal failed');
-	  							timestamp = Math.round((new Date()).getTime() / 1000);
+	  							timestamp = moment.utc().format('YYYY MM DD hh:mm:ss sss');
 									res.json({ isSuccess: true, uploadTimestamp: timestamp, endpointStatusCode: 200, endpointStatusMessage: 'upload successful, but local file deletion failed' });	 						
 								}
-							timestamp = Math.round((new Date()).getTime() / 1000);
+							timestamp = moment.utc().format('YYYY MM DD hh:mm:ss sss');
 							res.json({ isSuccess: true, uploadTimestamp: timestamp, endpointStatusCode: 200, endpointStatusMessage: 'upload and local file deletion successful' });	 						
 							});
 				    }
