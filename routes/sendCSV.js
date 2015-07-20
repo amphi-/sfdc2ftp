@@ -61,7 +61,7 @@ router.post('/', jsonParser, function(req, res, next) {
 					console.log('upload failed');
 					console.log(err);
 					timestamp = Math.round((new Date()).getTime() / 1000);
-					res.json({ isSuccess: false, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
+					res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 				})
 				c.on('ready', function() {
 					c.put(cfg.create_dir + filename, filename, function(err) {
@@ -72,16 +72,14 @@ router.post('/', jsonParser, function(req, res, next) {
 				    	console.log('upload failed at ' + failTime);
 				    	console.log(err);
 				    } else {
-							c.end();
-					    isSuccess = true;
-					    statuscode = 200;
-					    statusmessage = 'upload successfull';
+							c.end();					    
 					    timestamp = Math.round((new Date()).getTime() / 1000);
 					    var uploadTime = moment().format('YYYY MM DD hh:mm:ss sss');
 					    console.log('file uploaded at ' + uploadTime);
 				    	fs.unlink(cfg.create_dir + filename, function (err) {
 	  						if (err) {
 	  							console.log('removal failed');
+	  							timestamp = Math.round((new Date()).getTime() / 1000);
 									res.json({ isSuccess: true, uploadTimestamp: timestamp, endpointStatusCode: 200, endpointStatusMessage: 'upload successful, but local file deletion failed' });	 						
 								}
 							res.json({ isSuccess: true, uploadTimestamp: timestamp, endpointStatusCode: 200, endpointStatusMessage: 'upload and local file deletion successful' });	 						
