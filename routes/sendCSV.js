@@ -14,7 +14,7 @@ router.post('/', jsonParser, function(req, res, next) {
 
 
 	var moment = require('moment');
-	var startTime = moment().format('YYYY MM DD HH:mm:ss sss');
+	var startTime = moment.utc().format('YYYY MM DD HH:mm:ss sss');
 	console.log('starting to create file at' + startTime);
 	//convert to CSV
 	var json = req.body;
@@ -24,7 +24,7 @@ router.post('/', jsonParser, function(req, res, next) {
 	json.rows.shift();
 	var allData = json.rows;
 	var allDataJoined = [];
-	var createTime = moment().format('YYYYMMDD-HHmmss');
+	var createTime = moment.utc().format('YYYYMMDD-HHmmss');
 
 	var filename = jobId + ' - ' + createTime + '.csv';
 	console.log(filename);
@@ -51,38 +51,38 @@ router.post('/', jsonParser, function(req, res, next) {
 		   	var startUpload = moment.utc().format('YYYYMMDDHHmmsssss');
 
 				var Client = require('ftp');
-			  	var c = new Client();
-			    var connectonProperties = {	host: cfg.ftp_host,
-			  								user: cfg.ftp_credentials.user,
-			  								password: cfg.ftp_credentials.pw
+		  	var c = new Client();
+		    var connectonProperties = {	host: cfg.ftp_host,
+		  															user: cfg.ftp_credentials.user,
+		  															password: cfg.ftp_credentials.pw
 				};
 
 				c.on('error',function(err) {
 					console.log('upload failed');
 					console.log(err);
 					timestamp = moment.utc().format('YYYY MM DD hh:mm:ss');
-					res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
+					res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, timezone: cfg.timezone,  endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 				})
 				c.on('ready', function() {
 					c.put(cfg.create_dir + filename, filename, function(err) {
 				    if (err) {
 				    	c.end();
 							timestamp = moment.utc().format('YYYY MM DD hh:mm:ss');
-				    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
+				    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, timezone: cfg.timezone, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 				    	console.log('upload failed at ' + failTime);
 				    	console.log(err);
 				    } else {
 							c.end();					    					    
-					    var uploadTime = moment().format('YYYY MM DD hh:mm:ss');
+					    var uploadTime = moment.utc().format('YYYY MM DD hh:mm:ss');
 					    console.log('file uploaded at ' + uploadTime);
 				    	fs.unlink(cfg.create_dir + filename, function (err) {
 	  						if (err) {
 	  							console.log('removal failed');
 	  							timestamp = moment.utc().format('YYYY MM DD hh:mm:ss');
-									res.json({ isSuccess: true, uploadTimestamp: timestamp, endpointStatusCode: 200, endpointStatusMessage: 'upload successful, but local file deletion failed' });	 						
+									res.json({ isSuccess: true, uploadTimestamp: timestamp, timezone: cfg.timezone,  endpointStatusCode: 200, endpointStatusMessage: 'upload successful, but local file deletion failed' });	 						
 								}
 							timestamp = moment.utc().format('YYYY MM DD hh:mm:ss');
-							res.json({ isSuccess: true, uploadTimestamp: timestamp, endpointStatusCode: 200, endpointStatusMessage: 'upload and local file deletion successful' });	 						
+							res.json({ isSuccess: true, uploadTimestamp: timestamp, timezone: cfg.timezone,  endpointStatusCode: 200, endpointStatusMessage: 'upload and local file deletion successful' });	 						
 							});
 				    }
 				    });

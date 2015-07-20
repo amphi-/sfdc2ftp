@@ -4,6 +4,7 @@
 	},
 	"ftp_host":"localhost",
 	"remote_token":"x§fgAA67=",
-	"create_dir":"/Users/simon/csvhandler/"
+	"create_dir":"/Users/simon/csvhandler/",
+  "timezone":"UTC"
 }
 
