@@ -58,23 +58,20 @@ router.post('/', jsonParser, function(req, res, next) {
 				};
 
 				c.on('error',function(err) {
-
 					console.log('upload failed');
 					console.log(err);
-					res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
-
+					res.json({ isSuccess: false, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 				})
 				c.on('ready', function() {
-
 					c.put(cfg.create_dir + filename, filename, function(err) {
 				    if (err) {
-				    	//res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
+				    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 				    	c.end();
 				    	var failTime = moment().format('YYYY MM DD hh:mm:ss sss');
 				    	console.log('upload failed at ' + failTime);
 				    	console.log(err);
 				    } else {
-						c.end();
+							c.end();
 					    isSuccess = true;
 					    statuscode = 200;
 					    statusmessage = 'upload successfull';
@@ -84,9 +81,10 @@ router.post('/', jsonParser, function(req, res, next) {
 				    	fs.unlink(cfg.create_dir + filename, function (err) {
 	  						if (err) {
 	  							console.log('removal failed');
+									res.json({ isSuccess: true, uploadTimestamp: timestamp, endpointStatusCode: 200, endpointStatusMessage: 'upload successful, but local file deletion failed' });	 						
 								}
-							res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });	 						
-						});
+							res.json({ isSuccess: true, uploadTimestamp: timestamp, endpointStatusCode: 200, endpointStatusMessage: 'upload and local file deletion successful' });	 						
+							});
 				    }
 				    });
 				}); 
