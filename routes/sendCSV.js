@@ -22,8 +22,7 @@ router.post('/', jsonParser, function(req, res, next) {
 	json.rows.shift();
 	var allData = json.rows;
 	var allDataJoined = [];
-	var createTime = moment().format('YYYY MM DD HH:mm:ss');
-
+	var createTime = moment().format('YYYYMMDD-HHmmss');
 
 	var filename = jobId + ' - ' + createTime + '.csv';
 	console.log(filename);
@@ -34,59 +33,66 @@ router.post('/', jsonParser, function(req, res, next) {
 	var data = allData.join('\n');
 	var encodedData = cp1252.encode(data);
 	console.log(encodedData);
-   	fs.writeFile(filename, fields + '\n' + encodedData, function(err) {
+
+	// remove generated file after upload
+   	fs.writeFile(filename, fields + '\n' + encodedData, function(err,written,str) {
 	   	if(err) {
 	   		throw err;
 	   		console.log('file not created');
+	   	} else {
+		   	console.log('file created at ' + createTime);
+
+		   	//upload file
+		   	var startUpload = moment().format('YYYYMMDDHHmmsssss');
+
+			var Client = require('ftp');
+		  	var c = new Client();
+		    var connectonProperties = {	host: cfg.ftp_host,
+		  								user: cfg.ftp_credentials[0].user,
+		  								password: cfg.ftp_credentials[1].pw
+			};
+			console.log(connectonProperties);
+
+			//filename = 'uploaded_file.csv';
+			c.on('ready', function() {
+				// c.put(filename,filename, function(err) {
+				c.put(cfg.create_dir + filename, filename, function(err) {
+			    if (err) {
+			    	// var statuscode = c.error();
+			    	// if (statuscode == 503) {
+			    	// 	statusmessage = 'Service Unavailable';
+			    	// } else if(statuscode == 553) {
+			    	// 	statusmessage = 'Requested action not taken. File name not allowed.';
+			    	// } else if(statuscode == 10054) {
+			    	// 	statusmessage = 'Connection reset by peer. The connection was forcibly closed by the remote host.';
+			    	// } else if(statuscode == 10060) {
+			    	// 	statusmessage = 'Cannot connect to remote server.';
+			    	// } else if(statuscode == '10061') {
+			    	// 	statusmessage = 'Cannot connect to remote server. The connection is actively refused by the server.';
+			    	// } 
+			    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
+			    	c.end();
+			    	var failTime = moment().format('YYYY MM DD hh:mm:ss sss');
+			    	console.log('upload failed at ' + failTime);
+			    	console.log(err);
+			    } else {
+					c.end();
+				    isSuccess = true;
+				    statuscode = 200;
+				    statusmessage = 'upload successfull';
+				    timestamp = Math.round((new Date()).getTime() / 1000);
+				    var uploadTime = moment().format('YYYY MM DD hh:mm:ss sss');
+				    console.log('file uploaded at ' + uploadTime);
+			    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
+			    	fs.unlink(cfg.create_dir + filename, function (err) {
+  						if (err) throw err;
+  						console.log('successfully deleted /tmp/hello');
+					});
+			    }
+			    });
+			}); 
+			c.connect(connectonProperties);
 	   	}
    	});
-   	console.log('file created at ' + createTime);
-
-   	//upload file
-   	var startUpload = moment().format('YYYY MM DD HH:mm:ss sss');
-   	console.log('upload started at ' + startUpload);
-	var Client = require('ftp');
-
-  	var c = new Client();
-    var connectonProperties = {	host: cfg.ftp_host,
-  								user: cfg.ftp_credentials[0].user,
-  								password: cfg.ftp_credentials[1].pw
-	};
-	console.log(connectonProperties);
-	c.on('ready', function() {
-		c.put(cfg.create_dir + filename, filename, function(err) {
-	    if (err) {
-	    	// var statuscode = c.error();
-	    	// if (statuscode == 503) {
-	    	// 	statusmessage = 'Service Unavailable';
-	    	// } else if(statuscode == 553) {
-	    	// 	statusmessage = 'Requested action not taken. File name not allowed.';
-	    	// } else if(statuscode == 10054) {
-	    	// 	statusmessage = 'Connection reset by peer. The connection was forcibly closed by the remote host.';
-	    	// } else if(statuscode == 10060) {
-	    	// 	statusmessage = 'Cannot connect to remote server.';
-	    	// } else if(statuscode == '10061') {
-	    	// 	statusmessage = 'Cannot connect to remote server. The connection is actively refused by the server.';
-	    	// } 
-	    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
-	    	c.end();
-	    	var failTime = moment().format('YYYY MM DD hh:mm:ss sss');
-	    	console.log('upload failed at ' + failTime);
-	    } else {
-			c.end();
-		    isSuccess = true;
-		    statuscode = 200;
-		    statusmessage = 'upload successfull';
-		    timestamp = Math.round((new Date()).getTime() / 1000);
-		    var uploadTime = moment().format('YYYY MM DD hh:mm:ss sss');
-		    console.log('file uploaded at ' + uploadTime);
-	    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
-	    }
-	      
-	    });
-		
-	}); 
-	  c.connect(connectonProperties);
-
 });
 module.exports = router;
