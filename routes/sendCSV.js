@@ -72,8 +72,7 @@ router.post('/', jsonParser, function(req, res, next) {
 				    	console.log('upload failed at ' + failTime);
 				    	console.log(err);
 				    } else {
-							c.end();					    
-					    timestamp = Math.round((new Date()).getTime() / 1000);
+							c.end();					    					    
 					    var uploadTime = moment().format('YYYY MM DD hh:mm:ss sss');
 					    console.log('file uploaded at ' + uploadTime);
 				    	fs.unlink(cfg.create_dir + filename, function (err) {
@@ -82,6 +81,7 @@ router.post('/', jsonParser, function(req, res, next) {
 	  							timestamp = Math.round((new Date()).getTime() / 1000);
 									res.json({ isSuccess: true, uploadTimestamp: timestamp, endpointStatusCode: 200, endpointStatusMessage: 'upload successful, but local file deletion failed' });	 						
 								}
+							timestamp = Math.round((new Date()).getTime() / 1000);
 							res.json({ isSuccess: true, uploadTimestamp: timestamp, endpointStatusCode: 200, endpointStatusMessage: 'upload and local file deletion successful' });	 						
 							});
 				    }
