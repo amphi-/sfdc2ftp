@@ -60,14 +60,15 @@ router.post('/', jsonParser, function(req, res, next) {
 				c.on('error',function(err) {
 					console.log('upload failed');
 					console.log(err);
+					timestamp = Math.round((new Date()).getTime() / 1000);
 					res.json({ isSuccess: false, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 				})
 				c.on('ready', function() {
 					c.put(cfg.create_dir + filename, filename, function(err) {
 				    if (err) {
-				    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 				    	c.end();
-				    	var failTime = moment().format('YYYY MM DD hh:mm:ss sss');
+				    	timestamp = Math.round((new Date()).getTime() / 1000);
+				    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 				    	console.log('upload failed at ' + failTime);
 				    	console.log(err);
 				    } else {
