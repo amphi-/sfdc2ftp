@@ -1,7 +1,7 @@
-{	"ftp_credentials": [
-		{"user":"simon"},
-		{"pw": ":Ek00Lbo1!"}
-	],
+{	"ftp_credentials": {
+		"user":"simon",
+		"pw": ":Ek00Lbo125!"
+	},
 	"ftp_host":"localhost",
 	"remote_token":"x§fgAA67=",
 	"create_dir":"/Users/simon/csvhandler/"

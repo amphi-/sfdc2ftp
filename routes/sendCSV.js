@@ -11,6 +11,8 @@ var statusmessage = 'upload failed';
 var cfg = require('./cfg.json');
 
 router.post('/', jsonParser, function(req, res, next) {
+
+
 	var moment = require('moment');
 	var startTime = moment().format('YYYY MM DD HH:mm:ss sss');
 	console.log('starting to create file at' + startTime);
@@ -36,6 +38,9 @@ router.post('/', jsonParser, function(req, res, next) {
 
 	// remove generated file after upload
    	fs.writeFile(filename, fields + '\n' + encodedData, function(err,written,str) {
+
+   		// generate CSV
+   		// TODO: return as error 
 	   	if(err) {
 	   		throw err;
 	   		console.log('file not created');
@@ -45,53 +50,47 @@ router.post('/', jsonParser, function(req, res, next) {
 		   	//upload file
 		   	var startUpload = moment().format('YYYYMMDDHHmmsssss');
 
-			var Client = require('ftp');
-		  	var c = new Client();
-		    var connectonProperties = {	host: cfg.ftp_host,
-		  								user: cfg.ftp_credentials[0].user,
-		  								password: cfg.ftp_credentials[1].pw
-			};
-			console.log(connectonProperties);
+				var Client = require('ftp');
+			  	var c = new Client();
+			    var connectonProperties = {	host: cfg.ftp_host,
+			  								user: cfg.ftp_credentials.user,
+			  								password: cfg.ftp_credentials.pw
+				};
 
-			//filename = 'uploaded_file.csv';
-			c.on('ready', function() {
-				// c.put(filename,filename, function(err) {
-				c.put(cfg.create_dir + filename, filename, function(err) {
-			    if (err) {
-			    	// var statuscode = c.error();
-			    	// if (statuscode == 503) {
-			    	// 	statusmessage = 'Service Unavailable';
-			    	// } else if(statuscode == 553) {
-			    	// 	statusmessage = 'Requested action not taken. File name not allowed.';
-			    	// } else if(statuscode == 10054) {
-			    	// 	statusmessage = 'Connection reset by peer. The connection was forcibly closed by the remote host.';
-			    	// } else if(statuscode == 10060) {
-			    	// 	statusmessage = 'Cannot connect to remote server.';
-			    	// } else if(statuscode == '10061') {
-			    	// 	statusmessage = 'Cannot connect to remote server. The connection is actively refused by the server.';
-			    	// } 
-			    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
-			    	c.end();
-			    	var failTime = moment().format('YYYY MM DD hh:mm:ss sss');
-			    	console.log('upload failed at ' + failTime);
-			    	console.log(err);
-			    } else {
-					c.end();
-				    isSuccess = true;
-				    statuscode = 200;
-				    statusmessage = 'upload successfull';
-				    timestamp = Math.round((new Date()).getTime() / 1000);
-				    var uploadTime = moment().format('YYYY MM DD hh:mm:ss sss');
-				    console.log('file uploaded at ' + uploadTime);
-			    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
-			    	fs.unlink(cfg.create_dir + filename, function (err) {
-  						if (err) throw err;
-  						console.log('successfully deleted /tmp/hello');
-					});
-			    }
-			    });
-			}); 
-			c.connect(connectonProperties);
+				c.on('error',function(err) {
+
+					console.log('upload failed');
+					console.log(err);
+					res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
+
+				})
+				c.on('ready', function() {
+
+					c.put(cfg.create_dir + filename, filename, function(err) {
+				    if (err) {
+				    	//res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
+				    	c.end();
+				    	var failTime = moment().format('YYYY MM DD hh:mm:ss sss');
+				    	console.log('upload failed at ' + failTime);
+				    	console.log(err);
+				    } else {
+						c.end();
+					    isSuccess = true;
+					    statuscode = 200;
+					    statusmessage = 'upload successfull';
+					    timestamp = Math.round((new Date()).getTime() / 1000);
+					    var uploadTime = moment().format('YYYY MM DD hh:mm:ss sss');
+					    console.log('file uploaded at ' + uploadTime);
+				    	fs.unlink(cfg.create_dir + filename, function (err) {
+	  						if (err) {
+	  							console.log('removal failed');
+								}
+							res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });	 						
+						});
+				    }
+				    });
+				}); 
+				c.connect(connectonProperties);
 	   	}
    	});
 });

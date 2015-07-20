@@ -43,3 +43,5 @@ Download the source code from network share path provided.
 	   ftp
 	   windows-1252
 
+FTP
+start local FTP using the following command: 'sudo -s launchctl load -w /System/Library/LaunchDaemons/ftp.plist'
