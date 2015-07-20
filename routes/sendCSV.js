@@ -60,28 +60,28 @@ router.post('/', jsonParser, function(req, res, next) {
 				c.on('error',function(err) {
 					console.log('upload failed');
 					console.log(err);
-					timestamp = moment.utc().format('YYYY MM DD hh:mm:ss sss');
+					timestamp = moment.utc().format('YYYY MM DD hh:mm:ss');
 					res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 				})
 				c.on('ready', function() {
 					c.put(cfg.create_dir + filename, filename, function(err) {
 				    if (err) {
 				    	c.end();
-							timestamp = moment.utc().format('YYYY MM DD hh:mm:ss sss');
+							timestamp = moment.utc().format('YYYY MM DD hh:mm:ss');
 				    	res.json({ isSuccess: isSuccess, uploadTimestamp: timestamp, endpointStatusCode: statuscode, endpointStatusMessage: statusmessage });
 				    	console.log('upload failed at ' + failTime);
 				    	console.log(err);
 				    } else {
 							c.end();					    					    
-					    var uploadTime = moment().format('YYYY MM DD hh:mm:ss sss');
+					    var uploadTime = moment().format('YYYY MM DD hh:mm:ss');
 					    console.log('file uploaded at ' + uploadTime);
 				    	fs.unlink(cfg.create_dir + filename, function (err) {
 	  						if (err) {
 	  							console.log('removal failed');
-	  							timestamp = moment.utc().format('YYYY MM DD hh:mm:ss sss');
+	  							timestamp = moment.utc().format('YYYY MM DD hh:mm:ss');
 									res.json({ isSuccess: true, uploadTimestamp: timestamp, endpointStatusCode: 200, endpointStatusMessage: 'upload successful, but local file deletion failed' });	 						
 								}
-							timestamp = moment.utc().format('YYYY MM DD hh:mm:ss sss');
+							timestamp = moment.utc().format('YYYY MM DD hh:mm:ss');
 							res.json({ isSuccess: true, uploadTimestamp: timestamp, endpointStatusCode: 200, endpointStatusMessage: 'upload and local file deletion successful' });	 						
 							});
 				    }
