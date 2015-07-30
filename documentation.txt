@@ -41,7 +41,18 @@ Download the source code from network share path provided.
 	   body-parser
 	   moment
 	   ftp
+	   sftp
 	   windows-1252
 
 FTP
-start local FTP using the following command: 'sudo -s launchctl load -w /System/Library/LaunchDaemons/ftp.plist'
+start local FTP using the following command: 'sudo -s launchctl load -w /System/Library/LaunchDaemons/ftp.plist'. From now on you should be able to connect to your ftp using the command 'ftp localhost'. You will be asked for username and password, which can be found in the email, providing the credentials.
+
+3. Configuration
+
+To configure the middleware, all you need to to is open the cfg.json and edit the self-describing config items like 'ftp_host' or 'user'.
+
+4. Error messages
+
+The error messages are based on the HTML error codes. Find a list of the most commons ones below:
+
+5. Maintenance
