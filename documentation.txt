@@ -12,12 +12,11 @@ Contents
 		c. modules
 	3. Configuration
 	4. Error messages
-	5. Maintenance
 
 
 1. Overview
 
-The middleware is written in NodeJS v0.12.7 using the Express.js 4 framework. The middleware receives data from salesforce via JSON POST, converts the data into a CSV file (Windows-1252 encoded). This file will be uploaded to the desired customer FTP. The middleware will be triggered by a Apex script written on salesforce side.
+The middleware is written in NodeJS v0.12.7 using the Express.js 4 framework. The middleware receives data from Salesforce via JSON POST, converts the data into a CSV file (Windows-1252 encoded) and sends a JSON answer back to Salesforce. This file will be uploaded to the desired customer FTP. The middleware will be triggered by a Apex script written on Salesforce side.
 
 2. Installation
 
@@ -53,6 +52,15 @@ To configure the middleware, all you need to to is open the cfg.json and edit th
 
 4. Error messages
 
-The error messages are based on the HTML error codes. Find a list of the most commons ones below:
+The error messages are based on the HTTP error codes. Find a list of the most common ones below:
 
-5. Maintenance
+	200		OK
+	400		Bad request
+	404		Not found
+	408		Request timeout
+	500		Internal server error
+	502 	Bad Gateway
+	503		Service unavailable
+	504		Gateway timeout
+
+
