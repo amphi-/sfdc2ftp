@@ -3,7 +3,6 @@
 	"ftp_host":"ie1.hostedftp.com",
 	"ftp_port":21,
 	"ftp_protocol":"ftp",
-	"ftp_path":"/",
-	"create_dir":"/Users/simon/csvhandler/"
+	"ftp_path":"/"
 }
 
