@@ -53,6 +53,8 @@ Enter your FTP credentials in /routes/cfg.json . You can validate the connection
 Given that your server already has an Apache running, it is recommended to leverage its Reverse Proxy capabilities. A detailed instruction guide is available here
 http://blog.podrezo.com/making-node-js-work-with-apache/
 
+OR use heroku to build the app.
+
 
 6. Run the server
 Execute the following command to start the server with forever
