@@ -1,7 +1,6 @@
 #####
 #	sfdc2ftp
 #	version: 	1.0.0
-#	author: 	Simon Doebereiner
 #	license: 	MIT
 #####
 
