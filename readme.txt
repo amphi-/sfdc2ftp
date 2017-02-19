@@ -1,7 +1,8 @@
 #####
-#	CSV exchanger middleware documentation
+#	sfdc2ftp
 #	version: 	1.0.0
-#	author: 	CowPanda Ltd.
+#	author: 	Simon Doebereiner
+#	license: 	MIT
 #####
 
 Contents
@@ -31,7 +32,7 @@ For maintenance and update purposes, please install git https://git-scm.com/down
 
 2.3 Clone Repository
 
-Download the application code from bitbucket into the target folder using git’s clone command. The repository is available here https://bitbucket.org/sdoebs/streit . Manfred Streit has access to the repository please request his credentials or provide us with an email address we can add to the repository.
+Download the application code from GitHub into the target folder using git’s clone command. 
 
 2.4 Dependencies
 
@@ -49,7 +50,7 @@ Enter your FTP credentials in /routes/cfg.json . You can validate the connection
 
 
 5. Apache config
-Given that MEP already has an Apache running, it is recommended to leverage its Reverse Proxy capabilities. A detailed instruction guide is available here
+Given that your server already has an Apache running, it is recommended to leverage its Reverse Proxy capabilities. A detailed instruction guide is available here
 http://blog.podrezo.com/making-node-js-work-with-apache/
 
 
@@ -68,7 +69,7 @@ The error messages are based on the HTTP error codes. Find a list of the most co
 	404		Not found
 	408		Request timeout
 	500		Internal server error
-	502 	Bad Gateway
+	502 		Bad Gateway
 	503		Service unavailable
 	504		Gateway timeout
 

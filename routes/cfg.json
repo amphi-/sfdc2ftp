@@ -1,8 +1,8 @@
-{	"ftp_user":"se6wagner@gmail.com",
-	"ftp_pw": "123456",
-	"ftp_host":"ie1.hostedftp.com",
+{	"ftp_user":"username",
+	"ftp_pw": "password",
+	"ftp_host":"hostname",
 	"ftp_port":21,
 	"ftp_protocol":"ftp",
-	"ftp_path":"/"
+	"ftp_path":"path"
 }
 
